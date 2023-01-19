@@ -5,6 +5,7 @@ ext.versionFile = file('version.properties')
 ext.srcDirectory = './src'
 ext.outputDirectory = './bin'
 ext.distDirectory = './dist'
+ext.deployLocation = '/home/dthibau/Formations/Gradle/mywork/repo'
 
 // Configuration task
 version = readVersion()
@@ -52,6 +53,11 @@ task makeRelease(group: 'Build', description: "Construit et déploie une release
 		entry(key: 'classifier', type: 'string', operation: '=', value: 'final')
 	}
   }
+}
+
+task deploy(type:Copy, group: 'Build', description: "Déploie la distribution") {
+   from createDistribution.outputs.files
+   into deployLocation
 }
 
 task printProject {
