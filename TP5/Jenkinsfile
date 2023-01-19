@@ -1,0 +1,39 @@
+pipeline {
+   agent none 
+
+    triggers {
+        pollSCM 'H/5 * * * *'
+    }
+
+    stages {
+        stage('Compile et tests') {
+
+            steps {
+		// Execution des tests, archive, stash
+ 
+            }
+            post {
+                always {
+                    junit '**/target/surefire-reports/*.xml'
+                }
+            }
+        }
+        stage('Analyse qualité') {
+    
+            steps {
+                echo "QUALITY ANALYSIS"
+
+            }
+        }
+            
+        stage('Publishing Nexus') {
+      
+            steps {
+
+            }
+        }
+
+     }
+    
+}
+
