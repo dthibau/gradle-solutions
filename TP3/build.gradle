@@ -1,11 +1,14 @@
 setDescription("Atelier TP3")
 println "Description of project $name: " + description 
 
+ext {
+    profile = 'dev'
+}
 task printProject {
     doLast {
         setDescription('Tâche printProject')
         println "Nom tâche $name Description : $description"
-        println "Nom projet ${project.name}"
+        println "Nom projet ${project.name} Profil = ${project.profile}"
     }
 }
 
