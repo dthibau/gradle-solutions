@@ -1,0 +1,12 @@
+setDescription("Atelier TP3")
+println "Description of project $name: " + description 
+
+task printProject {
+    doLast {
+        setDescription('Tâche printProject')
+        println "Nom tâche $name Description : $description"
+        println "Nom projet ${project.name}"
+    }
+}
+
+
