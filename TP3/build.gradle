@@ -1,9 +1,7 @@
 setDescription("Atelier TP3")
 println "Description of project $name: " + description 
 
-ext {
-    profile = 'dev'
-}
+
 task printProject {
     doLast {
         setDescription('Tâche printProject')
