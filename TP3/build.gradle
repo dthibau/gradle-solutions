@@ -61,6 +61,12 @@ task makeSnapshot(type:UpdateVersionTask, dependsOn: [deploy]) {
 task release(dependsOn: [makeRelease, makeSnapshot],  group: 'Build', description: "Effectue une release") {
 }
 
+gradle.taskGraph.whenReady {taskGraph ->
+    if (taskGraph.hasTask(makeRelease) && !project.profile.equals('prod') ) {
+         throw new GradleException("makeRelease requires profile prod")
+    }
+}
+
 task printProject {
     group = 'Print'
     description = 'Print project information'
