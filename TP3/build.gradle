@@ -37,8 +37,21 @@ task createDistribution(type: Zip, dependsOn: [compile],  group: 'Build', descri
   from outputDirectory
   destinationDirectory = file(distDirectory)
   archiveFileName="${project.name}-${project.version}.zip"
+}
 
+task makeRelease(group: 'Build', description: "Construit et déploie une release") {
+  inputs.property('classifier', project.version.classifier)
+  outputs.file versionFile
 
+  doFirst {
+  	print "Input properties : ${inputs.properties} "
+  }
+  
+  doLast {
+    ant.propertyfile(file: versionFile) {
+		entry(key: 'classifier', type: 'string', operation: '=', value: 'final')
+	}
+  }
 }
 
 task printProject {
