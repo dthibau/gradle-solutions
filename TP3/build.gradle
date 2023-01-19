@@ -1,13 +1,55 @@
 setDescription("Atelier TP3")
 println "Description of project $name: " + description 
 
+ext.versionFile = file('version.properties')
+
+// Configuration task
+task loadVersion { 
+   project.version = readVersion()
+}
 
 task printProject {
+    setGroup('Print')
+    
     doLast {
         setDescription('Tâche printProject')
         println "Nom tâche $name Description : $description"
-        println "Nom projet ${project.name} Profil = ${project.profile}"
+        println "Nom projet ${project.name} - Profil = ${project.profile} - Version : ${project.version}"
     }
 }
 
+
+ProjectVersion readVersion() {
+  logger.info 'Reading the version file.'
+  if(!versionFile.exists()) {
+    throw new GradleException("Required version file does not exist: $versionFile.canonicalPath")
+  }
+
+  Properties versionProps = new Properties()
+  versionFile.withInputStream { stream -> versionProps.load(stream) }
+
+
+  new ProjectVersion(versionProps.major, versionProps.minor, versionProps.classifier)
+
+}
+
+class ProjectVersion {
+    Integer majorNumber
+    Integer minorNumber
+    String classifier = 'beta'
+
+    ProjectVersion(majorNumber, minorNumber, classifier) {
+
+		this.minorNumber = Integer.parseInt(minorNumber)
+		this.majorNumber = Integer.parseInt(majorNumber)
+        if ( classifier )
+		    this.classifier = classifier
+
+	}
+
+    @Override
+    String toString() {
+         "$majorNumber.$minorNumber.$classifier" 
+    }
+}
 
