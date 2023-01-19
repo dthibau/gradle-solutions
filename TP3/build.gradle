@@ -1,5 +1,6 @@
-setDescription('Atelier TP3')
-println "Description of project $name: " + description 
+import org.formation.*
+
+setDescription("Atelier TP3")
 
 ext.versionFile = file('version.properties')
 ext.srcDirectory = './src'
@@ -85,44 +86,5 @@ ProjectVersion readVersion() {
 
 }
 
-class ProjectVersion implements Serializable {
-    Integer majorNumber
-    Integer minorNumber
-    String classifier = 'beta'
 
-    ProjectVersion(majorNumber, minorNumber, classifier) {
-
-		this.minorNumber = Integer.parseInt(minorNumber)
-		this.majorNumber = Integer.parseInt(majorNumber)
-        if ( classifier )
-		    this.classifier = classifier
-
-	}
-
-    @Override
-    String toString() {
-         "$majorNumber.$minorNumber.$classifier" 
-    }
-}
-
-class UpdateVersionTask extends DefaultTask {
-
-  @Input ProjectVersion projectVersion
-  @OutputFile File destFile
-
-  UpdateVersionTask() {
-    group = 'build'
-    description = 'Update the version file.'
-  }
-  @TaskAction
-  void start() {
-
-  	print "Input properties : ${inputs.properties} "
-    ant.propertyfile(file: destFile) {
-      entry(key: 'major', type: 'string', operation: '=', value: projectVersion.majorNumber)
-      entry(key: 'minor', type: 'string', operation: '=', value: projectVersion.minorNumber)
-      entry(key: 'classifier', type: 'string', operation: '=', value: projectVersion.classifier)
-    }
-  }
-}
 
