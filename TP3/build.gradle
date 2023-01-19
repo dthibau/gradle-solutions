@@ -40,19 +40,10 @@ task createDistribution(type: Zip, dependsOn: [compile],  group: 'Build', descri
   archiveFileName="${project.name}-${project.version}.zip"
 }
 
-task makeRelease(group: 'Build', description: "Construit et déploie une release") {
-  inputs.property('classifier', project.version.classifier)
-  outputs.file versionFile
+task makeRelease(type:UpdateVersionTask) {
+  projectVersion new ProjectVersion("$project.version.majorNumber","$project.version.minorNumber",'Final')
+  destFile versionFile
 
-  doFirst {
-  	print "Input properties : ${inputs.properties} "
-  }
-  
-  doLast {
-    ant.propertyfile(file: versionFile) {
-		entry(key: 'classifier', type: 'string', operation: '=', value: 'final')
-	}
-  }
 }
 
 task deploy(type:Copy, group: 'Build', description: "Déploie la distribution") {
@@ -85,7 +76,7 @@ ProjectVersion readVersion() {
 
 }
 
-class ProjectVersion {
+class ProjectVersion implements Serializable {
     Integer majorNumber
     Integer minorNumber
     String classifier = 'beta'
@@ -103,5 +94,26 @@ class ProjectVersion {
     String toString() {
          "$majorNumber.$minorNumber.$classifier" 
     }
+}
+
+class UpdateVersionTask extends DefaultTask {
+
+  @Input ProjectVersion projectVersion
+  @OutputFile File destFile
+
+  UpdateVersionTask() {
+    group = 'build'
+    description = 'Update the version file.'
+  }
+  @TaskAction
+  void start() {
+
+  	print "Input properties : ${inputs.properties} "
+    ant.propertyfile(file: destFile) {
+      entry(key: 'major', type: 'string', operation: '=', value: projectVersion.majorNumber)
+      entry(key: 'minor', type: 'string', operation: '=', value: projectVersion.minorNumber)
+      entry(key: 'classifier', type: 'string', operation: '=', value: projectVersion.classifier)
+    }
+  }
 }
 
