@@ -1,0 +1,46 @@
+ plugins {
+	id 'org.springframework.boot' version '2.2.0.RELEASE' apply false
+	id 'java'
+}
+
+
+subprojects {
+
+  apply plugin: 'java'
+  apply plugin: 'io.spring.dependency-management'
+  apply plugin: 'org.springframework.boot'
+
+  sourceCompatibility = '1.8'
+
+  repositories {
+    mavenCentral()
+  }
+
+  dependencies {
+    testImplementation('org.springframework.boot:spring-boot-starter-test')
+  }
+}
+
+project('library') {
+bootJar {
+    enabled = false
+}
+jar {
+    enabled = true
+}
+
+    dependencies {
+      implementation('org.springframework.boot:spring-boot-starter')
+    }
+}
+
+project('application') {
+      
+    dependencies {
+      implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation project(':library')
+
+    }
+}
+
