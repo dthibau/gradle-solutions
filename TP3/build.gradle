@@ -1,11 +1,45 @@
-description = 'Atelier TP3'
+setDescription('Atelier TP3')
 println "Description of project $name: " + description 
 
 ext.versionFile = file('version.properties')
+ext.srcDirectory = './src'
+ext.outputDirectory = './bin'
+ext.distDirectory = './dist'
 
 // Configuration task
 version = readVersion()
 
+
+task clean(type: Delete, group: 'Build', description: "Supprimme les répertoires $project.outputDirectory et $project.distDirectory") {
+   delete outputDirectory
+   delete distDirectory
+   doLast {
+     logger.quiet "Project cleaned"
+   }
+}
+
+task copyVersion(type: Copy, group: 'Build', description: "Copie le fichier de version dans $project.outputDirectory") {
+    from project.versionFile
+    into outputDirectory
+}
+
+task compile(type: Copy, dependsOn: copyVersion, group: 'Build', description: "Compile les sources vers $project.outputDirectory") {
+    from (srcDirectory) {
+		include '**/*.c'
+		rename { String filename ->
+        	filename.replace(".c", ".o")
+    	}
+	}
+    into outputDirectory
+}
+
+task createDistribution(type: Zip, dependsOn: [compile],  group: 'Build', description: "Crée la distribution au format zip") {
+  from outputDirectory
+  destinationDirectory = file(distDirectory)
+  archiveFileName="${project.name}-${project.version}.zip"
+
+
+}
 
 task printProject {
     group = 'Print'
