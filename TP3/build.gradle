@@ -40,15 +40,24 @@ task createDistribution(type: Zip, dependsOn: [compile],  group: 'Build', descri
   archiveFileName="${project.name}-${project.version}.zip"
 }
 
-task makeRelease(type:UpdateVersionTask) {
+task makeRelease(type:UpdateVersionTask, dependsOn: [clean]) {
   projectVersion new ProjectVersion("$project.version.majorNumber","$project.version.minorNumber",'Final')
   destFile versionFile
-
 }
 
 task deploy(type:Copy, group: 'Build', description: "Déploie la distribution") {
    from createDistribution.outputs.files
    into deployLocation
+}
+
+task makeSnapshot(type:UpdateVersionTask, dependsOn: [deploy]) {
+  projectVersion new ProjectVersion(''+project.version.majorNumber, "${project.version.minorNumber+1}", 'SNAPSHOT')
+  destFile versionFile
+}
+
+
+
+task release(dependsOn: [makeRelease, makeSnapshot],  group: 'Build', description: "Effectue une release") {
 }
 
 task printProject {
