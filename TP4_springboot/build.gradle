@@ -12,6 +12,28 @@ project.configurations.each { configuration ->
     println "Configuration: ${configuration.name}"
 }
 
+sourceSets {
+	integrationTest {
+		java.srcDir file('src/intTest/java')
+		resources.srcDir file('src/intTest/resources')
+		compileClasspath += sourceSets.main.output
+		runtimeClasspath += output + compileClasspath
+	}
+}
+
+configurations {
+	integrationTestImplementation.extendsFrom testImplementation
+	integrationTestnRuntime.extendsFrom runtimeOnly
+}
+
+
+task integrationTest(type: Test) {
+	testClassesDirs = sourceSets.integrationTest.output.classesDirs
+	classpath = sourceSets.integrationTest.runtimeClasspath
+}
+check.dependsOn integrationTest
+
+
 repositories {
 	mavenCentral()
 }
@@ -22,26 +44,26 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-validation")
 	implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
 	implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("org.springframework.boot:spring-boot-starter-security")
-    implementation("io.jsonwebtoken:jjwt:0.9.1")
-    implementation('io.springfox:springfox-swagger2:2.9.2')
-    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
-    runtimeOnly("org.springframework.boot:spring-boot-starter-actuator")
-    runtimeOnly("org.springframework.boot:spring-boot-starter-actuator")
-    runtimeOnly('io.springfox:springfox-swagger-ui:2.9.2')
-    runtimeOnly("org.webjars:bootstrap:4.1.3")
+	implementation("org.springframework.boot:spring-boot-starter-security")
+	implementation("io.jsonwebtoken:jjwt:0.9.1")
+	implementation('io.springfox:springfox-swagger2:2.9.2')
+	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+	runtimeOnly("org.springframework.boot:spring-boot-starter-actuator")
+	runtimeOnly("org.springframework.boot:spring-boot-starter-actuator")
+	runtimeOnly('io.springfox:springfox-swagger-ui:2.9.2')
+	runtimeOnly("org.webjars:bootstrap:4.1.3")
 	runtimeOnly("org.hsqldb:hsqldb")
-    runtimeOnly("org.postgresql:postgresql")
-    runtimeOnly("org.springframework.boot:spring-boot-devtools")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("org.springframework.security:spring-security-test")
-    testImplementation("net.sourceforge.htmlunit:htmlunit")
+	runtimeOnly("org.postgresql:postgresql")
+	runtimeOnly("org.springframework.boot:spring-boot-devtools")
+	testImplementation("org.springframework.boot:spring-boot-starter-test")
+	testImplementation("org.springframework.security:spring-security-test")
+	testImplementation("net.sourceforge.htmlunit:htmlunit")
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
 	testLogging {
-//		showStandardStreams = true
+		//		showStandardStreams = true
 		events 'started', 'passed', 'skipped', 'failed'
 	}
 }
