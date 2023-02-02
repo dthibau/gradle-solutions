@@ -4,10 +4,11 @@ plugins {
 	id "org.sonarqube" version "6.1.0.5360"
 	id 'org.springframework.boot' version '2.7.8'
 	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+	id 'maven-publish'
 }
 
 group = 'org.formation'
-version = '0.0.1-SNAPSHOT'
+version = '0.0.1'
 sourceCompatibility = '11'
 
 project.configurations.each { configuration ->
@@ -96,8 +97,42 @@ task jacocoIntTestReport(group: 'Verification', description: 'Generates code cov
 }
 intTest.finalizedBy jacocoIntTestReport
 
-sonar {
-	properties {
-		property 'sonar.coverage.jacoco.xmlReportPaths', "build/reports/jacoco-report.xml"
+
+publishing {
+  publications {
+    maven(MavenPublication) {
+    	artifact("build/libs/${project.name}-${version}.jar") {
+      		extension 'jar'
+    	}
 	}
+  }
+
+  repositories {
+	if ( version.toString().indexOf('SNAPSHOT') != -1 ) {
+		maven {
+			name 'nexus'
+			url 'http://localhost:8081/repository/maven-snapshots/'
+			allowInsecureProtocol true
+			credentials {
+				username project.repoUser
+				password project.repoPassword
+			}
+		}
+	} else {
+		maven {
+			name 'nexus'
+			url 'http://localhost:8081/repository/maven-releases/'
+			allowInsecureProtocol true
+			credentials {
+				username project.repoUser
+				password project.repoPassword
+			}
+		}
+	}
+
+  }
 }
+publishMavenPublicationToMavenLocal.dependsOn build
+publishMavenPublicationToNexusRepository.dependsOn build
+
+>>>>>>> 110f381 (Publishing to Nexus)
