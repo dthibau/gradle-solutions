@@ -1,5 +1,6 @@
 plugins {
 	id 'java'
+	id 'jacoco'
 	id 'org.springframework.boot' version '2.7.8'
 	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
 }
@@ -75,4 +76,15 @@ tasks.named('test') {
 		//		showStandardStreams = true
 		events 'started', 'passed', 'skipped', 'failed'
 	}
+	finalizedBy jacocoTestReport 
 }
+
+jacocoTestReport {
+    dependsOn test // tests are required to run before generating the report
+}
+
+task jacocoIntTestReport(group: 'Verification', description: 'Generates code coverage report for the intTest task.', type: JacocoReport) {
+  sourceSets sourceSets.intTest
+  executionData intTest
+}
+intTest.finalizedBy jacocoIntTestReport
