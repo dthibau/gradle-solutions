@@ -1,0 +1,43 @@
+pipeline {
+  agent any
+
+  stages {
+    stage('Tests unitaires') {
+      steps {  
+	      echo 'Building..'
+	      sh './gradlew clean test'
+     }
+     post { 
+        always { 
+            junit '**/build/test-results/test/*.xml'
+        }
+    }
+   }
+    stage('Integration Tests and sonarqube') {
+      parallel {
+        stage('Intégration test') {
+          agent any
+          steps {  
+            echo "Integration test"
+            sh './gradlew clean intTest'
+          }
+        }
+        stage('Quality analysis') {
+          agent any
+          steps {  
+            echo "Quality analysis" 
+            sh './gradlew check sonarqube'
+          }
+        }
+      }
+    }
+
+    stage('Publishing to nexus') {
+      steps {
+        echo 'Deploying..'
+        sh './gradlew -PrepoUser=admin -PrepoPassword=admin123 build publishMavenPublicationToNexusRepository'     
+      }
+    }
+
+  }
+}
