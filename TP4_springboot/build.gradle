@@ -13,25 +13,18 @@ project.configurations.each { configuration ->
 }
 
 sourceSets {
-	integrationTest {
+	intTest {
 		java.srcDir file('src/intTest/java')
 		resources.srcDir file('src/intTest/resources')
 		compileClasspath += sourceSets.main.output
-		runtimeClasspath += output + compileClasspath
+		runtimeClasspath += output + compileClasspath 
 	}
 }
 
 configurations {
-	integrationTestImplementation.extendsFrom testImplementation
-	integrationTestnRuntime.extendsFrom runtimeOnly
+	intTestImplementation.extendsFrom testImplementation
+	intTestRuntimeOnly.extendsFrom runtimeOnly
 }
-
-
-task integrationTest(type: Test) {
-	testClassesDirs = sourceSets.integrationTest.output.classesDirs
-	classpath = sourceSets.integrationTest.runtimeClasspath
-}
-check.dependsOn integrationTest
 
 
 repositories {
@@ -59,6 +52,19 @@ dependencies {
 	testImplementation("org.springframework.security:spring-security-test")
 	testImplementation("net.sourceforge.htmlunit:htmlunit")
 }
+
+task intTest(group: 'Build', description:'Run integration tests', type: Test) {
+	testClassesDirs = sourceSets.intTest.output.classesDirs
+	classpath = sourceSets.intTest.runtimeClasspath
+
+	useJUnitPlatform()
+
+	testLogging {
+		//		showStandardStreams = true
+		events 'started', 'passed', 'skipped', 'failed'
+	}
+}
+check.dependsOn intTest
 
 tasks.named('test') {
 	useJUnitPlatform()
