@@ -1,0 +1,22 @@
+// L’opérateur << est un raccourci pour doLast
+task startSession  {
+  doLast {
+    chant()
+  }
+}
+// Utilisation d’une tâche Ant 
+def chant() {
+  ant.echo(message: 'Repeat after me...')
+}
+// Définition dynamique de tâches
+3.times {
+  task "yayGradle$it" {
+    doLast {
+      println 'Gradle rocks'
+    }
+  }
+}
+// Dépendances entre tâches
+yayGradle0.dependsOn startSession
+yayGradle2.dependsOn yayGradle1, yayGradle0
+task groupTherapy(dependsOn: yayGradle2)
