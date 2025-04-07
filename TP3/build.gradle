@@ -1,18 +1,17 @@
-setDescription("Atelier TP3")
+description = 'Atelier TP3'
 println "Description of project $name: " + description 
 
 ext.versionFile = file('version.properties')
 
 // Configuration task
-task loadVersion { 
-   project.version = readVersion()
-}
+version = readVersion()
+
 
 task printProject {
-    setGroup('Print')
+    group = 'Print'
+    description = 'Print project information'
     
     doLast {
-        setDescription('Tâche printProject')
         println "Nom tâche $name Description : $description"
         println "Nom projet ${project.name} - Profil = ${project.profile} - Version : ${project.version}"
     }
