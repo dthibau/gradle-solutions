@@ -58,7 +58,10 @@ task intTest(group: 'Build', description:'Run integration tests', type: Test) {
 	classpath = sourceSets.intTest.runtimeClasspath
 
 	useJUnitPlatform()
-
+	reports {
+		junitXml.destination = file("$buildDir/test-results/integration")
+		html.destination = file("$buildDir/reports/tests/integration")
+	}
 	testLogging {
 		//		showStandardStreams = true
 		events 'started', 'passed', 'skipped', 'failed'
